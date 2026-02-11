@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+
+        const fetchGetUrl = "http://127.0.0.1:8000/tech_gadgets/gadget/1";
+        const fetchPostUrl = "http://127.0.0.1:8000/tech_gadgets/gadget/";
+
+
+        async function fetchTestGet() {
+            let result = await fetch(fetchGetUrl)
+            let resultToText = await result.text()
+            console.log(resultToText);
+        }
+
+        async function fetchTestPost() {
+            const data = { "test": "funktioniert" };
+
+            let response = await fetch(fetchPostUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('status:', response.status);
+            const contentType = response.headers.get('content-type') || '';
+            console.log('content-type:', contentType);
+
+            const text = await response.text();
+            console.log('raw response:', text);
+
+            if (contentType.includes('application/json')) {
+                try {
+                    const json = JSON.parse(text);
+                    console.log('parsed JSON:', json);
+                } catch (err) {
+                    console.error('Failed to parse JSON:', err);
+                }
+            } else {
+                // fallback: try parsing anyway (useful during debugging)
+                try {
+                    const json = JSON.parse(text);
+                    console.log('parsed JSON (fallback):', json);
+                } catch (err) {
+                    console.warn('Response is not JSON — handle as text/HTML.');
+                }
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <button onclick="fetchTestGet()"> empfange Daten </button>
+    <button onclick="fetchTestPost()"> Sende Daten </button>
+</body>
+
+</html>
