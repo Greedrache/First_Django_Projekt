@@ -4,13 +4,27 @@ from django.http import  HttpResponse, JsonResponse, HttpResponseNotFound, Http4
 from json  import dumps
 from django.utils.text import slugify
 from django.urls import reverse
+from django.views import View
 
 from .dummy_data import gadgets
+
+from django.views.generic.base import RedirectView
 
 # Create your views here.
 
 def start_page_view(request):
     return HttpResponse("Hello World")
+
+class RedirectToGagdetView(RedirectView):
+   pattern_name = "gadget_slug_url"
+
+   def get_redirect_url(self, *args, **kwargs):
+      slug = slugify(gadgets[kwargs.get("gagdet_id", 0)]["name"])
+      new_kwarg = {"gadget_slug": slug}
+      return super().get_redirect_url(*args, **new_kwarg)
+
+
+
 
 def single_gadget_int_view(request, gadget_id):
     if len(gadgets) > gadget_id:
@@ -18,6 +32,27 @@ def single_gadget_int_view(request, gadget_id):
       new_url = reverse("gadget_slug_url", args=[new_slug])
       return redirect(new_url) #slugs bindestrich statt leerzeichen
     return HttpResponseNotFound("Gadget not found")
+
+
+class GadgetView(View):
+    def get(self, request, gadget_slug):
+       gadget_match = None
+
+       for gadget in gadgets:
+           if slugify(gadget["name"]) == gadget_slug:
+            gadget_match = gadget
+    
+       if gadget_match:
+        return JsonResponse(gadget_match) #slugs bindestrich statt leerzeichen
+       raise Http404()
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            print(f"Received data: {data}")
+            return JsonResponse({"response": "Das Gadget wurde erfolgreich empfangen"})
+        except:
+            return JsonResponse({"response": "Fehler beim Verarbeiten der Daten"}, status=400 )
 
 
 
@@ -32,7 +67,7 @@ def single_slug_view(request, gadget_slug=""):
     
        if gadget_match:
         return JsonResponse(gadget_match) #slugs bindestrich statt leerzeichen
-       raise Http404("Gadget not found")
+       raise Http404()
    
 
    if request.method == "POST":
