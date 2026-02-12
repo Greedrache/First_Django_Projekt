@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
+from .views import custom_404_view
 
 def redirect_to_tech_gadgets(request):
     return redirect('tech_gadgets/') 
@@ -26,3 +26,6 @@ urlpatterns = [
     path('tech_gadgets/', include('tech_gadgets.urls')),
     path('', redirect_to_tech_gadgets),
 ]
+
+# Custom 404 handler
+handler404 = custom_404_view
