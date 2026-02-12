@@ -2,6 +2,7 @@ from django.urls import path
 from .views import start_page_view, single_gadget_int_view, single_post_view, GadgetView, RedirectToGagdetView
 
 urlpatterns = [
+    path('start/', start_page_view),
     path('', RedirectToGagdetView.as_view()),
     path('gadget/<int:gadget_id>', RedirectToGagdetView.as_view()),
     path('gadget/', GadgetView.as_view()),
