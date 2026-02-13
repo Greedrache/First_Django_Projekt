@@ -6,11 +6,11 @@
 
 {% block content %}
 
-{% for gadget in gadget_list %}
+{% for man in manufacturer_list %}
 <h2>
-    {{ gadget.name }}
+    {{ man.name }}
 </h2>
-<p>{{ gadget.description }}</p>
+<p>{{ man.description }}</p>
 {% endfor %}
 
 {% endblock %}

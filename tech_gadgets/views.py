@@ -6,14 +6,14 @@ from django.utils.text import slugify
 from django.urls import reverse
 from django.views import View
 
-from .dummy_data import gadgets
+from .dummy_data import manufacturers
 
 from django.views.generic.base import RedirectView
 
 # Create your views here.
 
 def start_page_view(request):
-    return render(request, 'tech_gadgets/test.html', {"gadget_list": gadgets})
+    return render(request, 'tech_gadgets/test.html', {"manufacturer_list": manufacturers})
 
 
 
@@ -23,7 +23,7 @@ class RedirectToGagdetView(RedirectView):
    pattern_name = "gadget_slug_url"
 
    def get_redirect_url(self, *args, **kwargs):
-      slug = slugify(gadgets[kwargs.get("gagdet_id", 0)]["name"])
+      slug = slugify(manufacturers[kwargs.get("gadget_id", 0)]["name"])
       new_kwarg = {"gadget_slug": slug}
       return super().get_redirect_url(*args, **new_kwarg)
 
@@ -31,8 +31,8 @@ class RedirectToGagdetView(RedirectView):
 
 
 def single_gadget_int_view(request, gadget_id):
-    if len(gadgets) > gadget_id:
-      new_slug = slugify(gadgets[gadget_id]["name"])
+    if len(manufacturers) > gadget_id:
+      new_slug = slugify(manufacturers[gadget_id]["name"])
       new_url = reverse("gadget_slug_url", args=[new_slug])
       return redirect(new_url) #slugs bindestrich statt leerzeichen
     return HttpResponseNotFound("Gadget not found")
@@ -42,7 +42,7 @@ class GadgetView(View):
     def get(self, request, gadget_slug):
        gadget_match = None
 
-       for gadget in gadgets:
+       for gadget in manufacturers:
            if slugify(gadget["name"]) == gadget_slug:
             gadget_match = gadget
     
@@ -65,9 +65,9 @@ def single_slug_view(request, gadget_slug=""):
    if request.method == "GET":
        gadget_match = None
 
-       for gadget in gadgets:
-           if slugify(gadget["name"]) == gadget_slug:
-            gadget_match = gadget
+       for man in manufacturers:
+           if slugify(man["name"]) == gadget_slug:
+            gadget_match = man
     
        if gadget_match:
         return JsonResponse(gadget_match) #slugs bindestrich statt leerzeichen
